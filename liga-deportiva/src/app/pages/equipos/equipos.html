@@ -1,0 +1,76 @@
+<div class="container py-5">
+  <div class="mb-4">
+    <a routerLink="/" class="text-decoration-none text-dark">
+      <i class="fas fa-arrow-left me-2"></i>Volver al Inicio
+    </a>
+  </div>
+
+  <h1 class="display-4 fw-bold mb-5 text-center">Equipos Participantes</h1>
+
+  <div class="d-flex justify-content-center gap-3 flex-wrap mb-5">
+    <button *ngFor="let comp of competitionsInfo"
+      (click)="selectCompetition(comp.id)"
+      [class]="'btn btn-lg ' + (selectedCompetition === comp.id ? 'btn-warning' : 'btn-outline-secondary')">
+      <i [class]="'fas ' + comp.icon + ' me-2'"></i>{{ comp.name }}
+    </button>
+  </div>
+
+  <div class="row g-4">
+    <div *ngFor="let team of getCurrentTeams()" class="col-12 col-md-6 col-lg-4">
+      <div class="card h-100 shadow-sm hover-card" (click)="openModal(team)" style="cursor: pointer;">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-start mb-3">
+            <h3 class="card-title h5 fw-bold">{{ team.nombre }}</h3>
+            <span class="badge bg-warning text-dark fs-6">#{{ team.posicion }}</span>
+          </div>
+          <p class="text-muted mb-2"><i class="fas fa-users me-2"></i>{{ team.jugadores }} jugadores</p>
+          <p class="text-muted mb-2"><i class="fas fa-user-tie me-2"></i>{{ team.capitan }}</p>
+          <div class="d-flex gap-2 mt-3">
+            <span class="badge bg-success">{{ team.victorias }}V</span>
+            <span class="badge bg-danger">{{ team.derrotas }}D</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="teamModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content" *ngIf="selectedTeam">
+      <div class="modal-header">
+        <h5 class="modal-title fs-3 fw-bold">{{ selectedTeam.nombre }}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3">
+          <p class="text-muted mb-1"><i class="fas fa-trophy me-2"></i>Posición</p>
+          <p class="fs-4 fw-bold">#{{ selectedTeam.posicion }}</p>
+        </div>
+        <div class="mb-3">
+          <p class="text-muted mb-1"><i class="fas fa-users me-2"></i>Jugadores</p>
+          <p class="fs-5">{{ selectedTeam.jugadores }}</p>
+        </div>
+        <div class="mb-3">
+          <p class="text-muted mb-1"><i class="fas fa-user-tie me-2"></i>Capitán</p>
+          <p class="fs-5">{{ selectedTeam.capitan }}</p>
+        </div>
+        <div class="mb-3">
+          <p class="text-muted mb-1"><i class="fas fa-chart-line me-2"></i>Estadísticas</p>
+          <p class="fs-5">
+            <span class="badge bg-success me-2">{{ selectedTeam.victorias }} Victorias</span>
+            <span class="badge bg-danger">{{ selectedTeam.derrotas }} Derrotas</span>
+          </p>
+          <div class="progress" style="height: 25px">
+            <div class="progress-bar bg-success" [style.width.%]="getWinPercentage(selectedTeam)">
+              {{ getWinPercentage(selectedTeam) }}%
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>

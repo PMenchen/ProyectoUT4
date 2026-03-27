@@ -1,0 +1,100 @@
+<div class="container py-5">
+  <div class="mb-4">
+    <a routerLink="/" class="text-decoration-none text-dark">
+      <i class="fas fa-arrow-left me-2"></i>Volver al Inicio
+    </a>
+  </div>
+
+  <h1 class="display-4 fw-bold mb-4 text-center">Resultados Recientes</h1>
+  <p class="text-center text-muted mb-5">Últimos 5 partidos jugados</p>
+
+  <div class="row">
+    <div class="col-12">
+      <div class="table-responsive">
+        <table class="table table-hover align-middle">
+          <thead class="table-dark">
+            <tr>
+              <th scope="col" class="text-center">Deporte</th>
+              <th scope="col">Equipo Local</th>
+              <th scope="col" class="text-center">Resultado</th>
+              <th scope="col">Equipo Visitante</th>
+              <th scope="col" class="text-center">Fecha</th>
+              <th scope="col">Ubicación</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let partido of partidos">
+              <td class="text-center">
+                <span [class]="'badge bg-' + getDeporteBadgeColor(partido.deporte)">
+                  <i [class]="'fas ' + getDeporteIcon(partido.deporte)"></i>
+                </span>
+              </td>
+              <td class="fw-bold">{{ partido.equipoLocal }}</td>
+              <td class="text-center">
+                <div class="d-flex justify-content-center align-items-center gap-2">
+                  <span [class]="'badge bg-' + getResultadoBadge(partido, true) + ' fs-6'">
+                    {{ partido.resultadoLocal }}
+                  </span>
+                  <span class="text-muted">-</span>
+                  <span [class]="'badge bg-' + getResultadoBadge(partido, false) + ' fs-6'">
+                    {{ partido.resultadoVisitante }}
+                  </span>
+                </div>
+              </td>
+              <td class="fw-bold">{{ partido.equipoVisitante }}</td>
+              <td class="text-center text-muted">
+                <i class="fas fa-calendar me-2"></i>{{ partido.fecha }}
+              </td>
+              <td>
+                <i class="fas fa-map-marker-alt me-2"></i>{{ partido.ubicacion }}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Vista móvil alternativa -->
+  <div class="d-md-none">
+    <div class="row g-3">
+      <div *ngFor="let partido of partidos" class="col-12">
+        <div class="card shadow-sm">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-start mb-3">
+              <span [class]="'badge bg-' + getDeporteBadgeColor(partido.deporte)">
+                <i [class]="'fas ' + getDeporteIcon(partido.deporte) + ' me-2'"></i>
+                {{ partido.deporte }}
+              </span>
+              <small class="text-muted">
+                <i class="fas fa-calendar me-1"></i>{{ partido.fecha }}
+              </small>
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <div class="text-center flex-grow-1">
+                <p class="fw-bold mb-1">{{ partido.equipoLocal }}</p>
+                <span [class]="'badge bg-' + getResultadoBadge(partido, true) + ' fs-5'">
+                  {{ partido.resultadoLocal }}
+                </span>
+              </div>
+              <div class="px-3">
+                <span class="text-muted fs-5">-</span>
+              </div>
+              <div class="text-center flex-grow-1">
+                <p class="fw-bold mb-1">{{ partido.equipoVisitante }}</p>
+                <span [class]="'badge bg-' + getResultadoBadge(partido, false) + ' fs-5'">
+                  {{ partido.resultadoVisitante }}
+                </span>
+              </div>
+            </div>
+
+            <p class="text-muted mb-0 small">
+              <i class="fas fa-map-marker-alt me-2"></i>{{ partido.ubicacion }}
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

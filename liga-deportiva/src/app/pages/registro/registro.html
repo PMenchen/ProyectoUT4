@@ -1,0 +1,194 @@
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-12 col-md-8 col-lg-6">
+      <div class="mb-4">
+        <a routerLink="/" class="text-decoration-none text-dark">
+          <i class="fas fa-arrow-left me-2"></i>Volver al Inicio
+        </a>
+      </div>
+
+      <div class="card shadow">
+        <div class="card-body p-5">
+          <div class="text-center mb-4">
+            <div class="bg-success text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3"
+                 style="width: 80px; height: 80px;">
+              <i class="fas fa-user-plus fs-1"></i>
+            </div>
+            <h1 class="h2 fw-bold">Crear Cuenta</h1>
+            <p class="text-muted">Únete a la Liga Deportiva</p>
+          </div>
+
+          <form (ngSubmit)="registrarse()">
+            <div class="mb-3">
+              <label for="nombre" class="form-label fw-bold">Nombre Completo</label>
+              <div class="input-group input-group-lg">
+                <span class="input-group-text bg-light">
+                  <i class="fas fa-user"></i>
+                </span>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="nombre"
+                  name="nombre"
+                  [(ngModel)]="formulario.nombre"
+                  placeholder="Tu nombre completo"
+                  required
+                />
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="email" class="form-label fw-bold">Email</label>
+              <div class="input-group input-group-lg">
+                <span class="input-group-text bg-light">
+                  <i class="fas fa-envelope"></i>
+                </span>
+                <input
+                  type="email"
+                  class="form-control"
+                  id="email"
+                  name="email"
+                  [(ngModel)]="formulario.email"
+                  placeholder="tu@email.com"
+                  required
+                />
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="tipoUsuario" class="form-label fw-bold">Tipo de Usuario</label>
+              <select
+                class="form-select form-select-lg"
+                id="tipoUsuario"
+                name="tipoUsuario"
+                [(ngModel)]="formulario.tipoUsuario"
+                required
+              >
+                <option *ngFor="let tipo of tiposUsuario" [value]="tipo.value">
+                  {{ tipo.label }}
+                </option>
+              </select>
+              <div class="form-text">
+                <small class="text-muted">
+                  <i class="fas fa-info-circle me-1"></i>
+                  Selecciona el tipo de cuenta que deseas crear
+                </small>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="password" class="form-label fw-bold">Contraseña</label>
+              <div class="input-group input-group-lg">
+                <span class="input-group-text bg-light">
+                  <i class="fas fa-lock"></i>
+                </span>
+                <input
+                  [type]="mostrarPassword ? 'text' : 'password'"
+                  class="form-control"
+                  id="password"
+                  name="password"
+                  [(ngModel)]="formulario.password"
+                  placeholder="Mínimo 6 caracteres"
+                  required
+                />
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary"
+                  (click)="togglePassword()"
+                >
+                  <i [class]="mostrarPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
+                </button>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="confirmarPassword" class="form-label fw-bold">Confirmar Contraseña</label>
+              <div class="input-group input-group-lg">
+                <span class="input-group-text bg-light">
+                  <i class="fas fa-lock"></i>
+                </span>
+                <input
+                  [type]="mostrarConfirmarPassword ? 'text' : 'password'"
+                  class="form-control"
+                  id="confirmarPassword"
+                  name="confirmarPassword"
+                  [(ngModel)]="formulario.confirmarPassword"
+                  placeholder="Repite tu contraseña"
+                  required
+                />
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary"
+                  (click)="toggleConfirmarPassword()"
+                >
+                  <i [class]="mostrarConfirmarPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
+                </button>
+              </div>
+            </div>
+
+            <div class="alert alert-danger" *ngIf="errorMensaje">
+              <i class="fas fa-exclamation-triangle me-2"></i>{{ errorMensaje }}
+            </div>
+
+            <div class="d-grid gap-2 mb-4">
+              <button type="submit" class="btn btn-success btn-lg">
+                <i class="fas fa-user-plus me-2"></i>Registrarse
+              </button>
+            </div>
+
+            <div class="form-text text-center mb-3">
+              <small class="text-muted">
+                Al registrarte, aceptas nuestros términos y condiciones
+              </small>
+            </div>
+          </form>
+
+          <hr class="my-4" />
+
+          <div class="text-center">
+            <p class="text-muted mb-2">¿Ya tienes una cuenta?</p>
+            <a routerLink="/login" class="btn btn-outline-primary btn-lg">
+              <i class="fas fa-sign-in-alt me-2"></i>Iniciar Sesión
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Información sobre tipos de usuario -->
+      <div class="card mt-3 bg-light">
+        <div class="card-body">
+          <h5 class="fw-bold mb-3">Tipos de Usuario</h5>
+          <div class="row g-3">
+            <div class="col-12 col-md-4">
+              <div class="d-flex align-items-start">
+                <i class="fas fa-user text-primary me-2 mt-1"></i>
+                <div>
+                  <strong>Usuario:</strong>
+                  <small class="text-muted d-block">Acceso a información y resultados</small>
+                </div>
+              </div>
+            </div>
+            <div class="col-12 col-md-4">
+              <div class="d-flex align-items-start">
+                <i class="fas fa-user-tie text-success me-2 mt-1"></i>
+                <div>
+                  <strong>Árbitro:</strong>
+                  <small class="text-muted d-block">Gestión de partidos arbitrados</small>
+                </div>
+              </div>
+            </div>
+            <div class="col-12 col-md-4">
+              <div class="d-flex align-items-start">
+                <i class="fas fa-user-shield text-warning me-2 mt-1"></i>
+                <div>
+                  <strong>Capitán:</strong>
+                  <small class="text-muted d-block">Administración de equipo</small>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

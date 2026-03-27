@@ -1,0 +1,131 @@
+<div class="container py-5">
+  <div class="mb-4">
+    <a routerLink="/" class="text-decoration-none text-dark">
+      <i class="fas fa-arrow-left me-2"></i>Volver al Inicio
+    </a>
+  </div>
+
+  <h1 class="display-4 fw-bold mb-4 text-center">Árbitros</h1>
+
+  <div class="row mb-4">
+    <div class="col-12 col-md-8 offset-md-2">
+      <div class="input-group input-group-lg">
+        <span class="input-group-text bg-white">
+          <i class="fas fa-search"></i>
+        </span>
+        <input
+          type="text"
+          class="form-control"
+          placeholder="Buscar árbitro por nombre o deporte..."
+          [(ngModel)]="searchTerm"
+        />
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-4">
+    <div *ngFor="let arbitro of filteredArbitros" class="col-12 col-md-6 col-lg-3">
+      <div class="card h-100 shadow-sm hover-card" (click)="openModal(arbitro)" style="cursor: pointer;">
+        <div class="card-body">
+          <div class="text-center mb-3">
+            <div class="rounded-circle bg-light d-inline-flex align-items-center justify-content-center"
+                 style="width: 80px; height: 80px;">
+              <i class="fas fa-user-tie fs-1 text-secondary"></i>
+            </div>
+          </div>
+
+          <h3 class="card-title h5 fw-bold text-center mb-3">{{ arbitro.nombre }}</h3>
+
+          <div class="text-center mb-3">
+            <span [class]="'badge bg-' + getDeporteBadgeColor(arbitro.deporte)">
+              <i [class]="'fas ' + getDeporteIcon(arbitro.deporte) + ' me-2'"></i>
+              {{ arbitro.deporte }}
+            </span>
+          </div>
+
+          <p class="text-muted mb-2 text-center">
+            <i class="fas fa-calendar me-2"></i>{{ arbitro.experiencia }} años de experiencia
+          </p>
+          <p class="text-muted mb-0 text-center">
+            <i class="fas fa-clipboard-list me-2"></i>{{ arbitro.partidosArbitrados }} partidos
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="filteredArbitros.length === 0" class="text-center py-5">
+    <i class="fas fa-search fs-1 text-muted mb-3"></i>
+    <p class="text-muted fs-5">No se encontraron árbitros con los criterios de búsqueda</p>
+  </div>
+</div>
+
+<div class="modal fade" id="arbitroModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content" *ngIf="selectedArbitro">
+      <div class="modal-header">
+        <h5 class="modal-title fs-3 fw-bold">{{ selectedArbitro.nombre }}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="text-center mb-4">
+          <div class="rounded-circle bg-light d-inline-flex align-items-center justify-content-center"
+               style="width: 100px; height: 100px;">
+            <i class="fas fa-user-tie fs-1 text-secondary"></i>
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <p class="text-muted mb-1">
+            <i [class]="'fas ' + getDeporteIcon(selectedArbitro.deporte) + ' me-2'"></i>
+            Deporte
+          </p>
+          <p class="fs-5">{{ selectedArbitro.deporte }}</p>
+        </div>
+
+        <div class="mb-3">
+          <p class="text-muted mb-1"><i class="fas fa-calendar me-2"></i>Experiencia</p>
+          <p class="fs-5">{{ selectedArbitro.experiencia }} años</p>
+        </div>
+
+        <div class="mb-3">
+          <p class="text-muted mb-1"><i class="fas fa-clipboard-list me-2"></i>Partidos Arbitrados</p>
+          <p class="fs-5">{{ selectedArbitro.partidosArbitrados }}</p>
+        </div>
+
+        <div class="mb-3">
+          <p class="text-muted mb-1"><i class="fas fa-chart-bar me-2"></i>Estadísticas</p>
+          <div class="row g-2">
+            <div *ngIf="selectedArbitro.estadisticas.tarjetasAmarillas !== undefined" class="col-6">
+              <div class="card bg-light">
+                <div class="card-body text-center py-3">
+                  <h6 class="mb-0 text-muted small">Tarjetas Amarillas</h6>
+                  <p class="fs-4 fw-bold mb-0 text-warning">{{ selectedArbitro.estadisticas.tarjetasAmarillas }}</p>
+                </div>
+              </div>
+            </div>
+            <div *ngIf="selectedArbitro.estadisticas.tarjetasRojas !== undefined" class="col-6">
+              <div class="card bg-light">
+                <div class="card-body text-center py-3">
+                  <h6 class="mb-0 text-muted small">Tarjetas Rojas</h6>
+                  <p class="fs-4 fw-bold mb-0 text-danger">{{ selectedArbitro.estadisticas.tarjetasRojas }}</p>
+                </div>
+              </div>
+            </div>
+            <div *ngIf="selectedArbitro.estadisticas.faltasTecnicas !== undefined" class="col-12">
+              <div class="card bg-light">
+                <div class="card-body text-center py-3">
+                  <h6 class="mb-0 text-muted small">Faltas Técnicas</h6>
+                  <p class="fs-4 fw-bold mb-0 text-primary">{{ selectedArbitro.estadisticas.faltasTecnicas }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,61 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top shadow-lg">
+  <div class="container-fluid">
+    <a routerLink="/" class="navbar-brand d-flex align-items-center gap-2">
+      <i class="fas fa-trophy fs-3 text-warning"></i>
+      <span class="fw-bold">Liga Deportiva Instituto</span>
+    </a>
+
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#navbarNav"
+      aria-controls="navbarNav"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto gap-3">
+        <li class="nav-item">
+          <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="nav-link">Inicio</a>
+        </li>
+        <li class="nav-item">
+          <a routerLink="/equipos" routerLinkActive="active" class="nav-link">Equipos</a>
+        </li>
+        <li class="nav-item">
+          <a routerLink="/resultados" routerLinkActive="active" class="nav-link">Resultados</a>
+        </li>
+        <li class="nav-item">
+          <a routerLink="/clasificaciones" routerLinkActive="active" class="nav-link">Clasificaciones</a>
+        </li>
+        <li class="nav-item">
+          <a routerLink="/jugadores" routerLinkActive="active" class="nav-link">Jugadores</a>
+        </li>
+        <li class="nav-item">
+          <a routerLink="/arbitros" routerLinkActive="active" class="nav-link">Árbitros</a>
+        </li>
+        <li class="nav-item">
+          <a routerLink="/contacto" routerLinkActive="active" class="nav-link">Contacto</a>
+        </li>
+        <li class="nav-item" *ngIf="isAdmin">
+          <a (click)="goToAdmin()" class="nav-link admin-link" style="cursor: pointer;">
+            <i class="fas fa-cog"></i> Administrar
+          </a>
+        </li>
+        <li class="nav-item" *ngIf="!isAuthenticated">
+          <a routerLink="/login" routerLinkActive="active" class="nav-link">
+            <i class="fas fa-sign-in-alt"></i> Login
+          </a>
+        </li>
+        <li class="nav-item" *ngIf="isAuthenticated">
+          <button (click)="logout()" class="nav-link btn btn-link text-decoration-none">
+            <i class="fas fa-sign-out-alt"></i> Logout
+          </button>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>

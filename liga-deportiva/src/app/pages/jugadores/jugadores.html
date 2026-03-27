@@ -1,0 +1,226 @@
+<div class="container py-5">
+  <div class="mb-4">
+    <a routerLink="/" class="text-decoration-none text-dark">
+      <i class="fas fa-arrow-left me-2"></i>Volver al Inicio
+    </a>
+  </div>
+
+  <h1 class="display-4 fw-bold mb-4 text-center">Jugadores</h1>
+
+  <div class="row mb-4">
+    <div class="col-12 col-md-8 offset-md-2">
+      <div class="input-group input-group-lg">
+        <span class="input-group-text bg-white">
+          <i class="fas fa-search"></i>
+        </span>
+        <input
+          type="text"
+          class="form-control"
+          placeholder="Buscar jugador por nombre, equipo, deporte o posición..."
+          [(ngModel)]="searchTerm"
+        />
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-4">
+    <div *ngFor="let jugador of filteredJugadores" class="col-12 col-md-6 col-lg-4">
+      <div
+        class="card h-100 shadow-sm hover-card"
+        (click)="openModal(jugador)"
+        style="cursor: pointer;"
+      >
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-start mb-3">
+            <div>
+              <h3 class="card-title h5 fw-bold mb-1">{{ jugador.nombre }}</h3>
+              <p class="text-muted mb-0">
+                <i [class]="'fas ' + getDeporteIcon(jugador.deporte) + ' me-2'"></i>
+                {{ jugador.deporte }}
+              </p>
+            </div>
+
+            <span *ngIf="jugador.numero !== undefined" class="badge bg-warning text-dark fs-5">
+              #{{ jugador.numero }}
+            </span>
+          </div>
+
+          <p class="text-muted mb-2">
+            <i class="fas fa-users me-2"></i>{{ getNombreEquipo(jugador) }}
+          </p>
+
+          <p *ngIf="jugador.posicion" class="text-muted mb-3">
+            <i class="fas fa-user-tag me-2"></i>{{ jugador.posicion }}
+          </p>
+
+          <div class="d-flex flex-wrap gap-2">
+            <span
+              *ngFor="let stat of getEstadisticasDisplay(jugador)"
+              class="badge bg-primary"
+            >
+              {{ stat }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="filteredJugadores.length === 0" class="text-center py-5">
+    <i class="fas fa-search fs-1 text-muted mb-3"></i>
+    <p class="text-muted fs-5">No se encontraron jugadores con los criterios de búsqueda</p>
+  </div>
+</div>
+
+<div class="modal fade" id="jugadorModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content" *ngIf="selectedJugador">
+      <div class="modal-header">
+        <h5 class="modal-title fs-3 fw-bold">{{ selectedJugador.nombre }}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row g-3 mb-3">
+          <div class="col-md-6">
+            <p class="text-muted mb-1">
+              <i [class]="'fas ' + getDeporteIcon(selectedJugador.deporte) + ' me-2'"></i>
+              Deporte
+            </p>
+            <p class="fs-5">{{ selectedJugador.deporte }}</p>
+          </div>
+
+          <div class="col-md-6">
+            <p class="text-muted mb-1">
+              <i class="fas fa-users me-2"></i>Equipo
+            </p>
+            <p class="fs-5">{{ getNombreEquipo(selectedJugador) }}</p>
+          </div>
+
+          <div class="col-md-6" *ngIf="selectedJugador.numero !== undefined">
+            <p class="text-muted mb-1">
+              <i class="fas fa-hashtag me-2"></i>Número
+            </p>
+            <p class="fs-5">{{ selectedJugador.numero }}</p>
+          </div>
+
+          <div class="col-md-6" *ngIf="selectedJugador.posicion">
+            <p class="text-muted mb-1">
+              <i class="fas fa-user-tag me-2"></i>Posición
+            </p>
+            <p class="fs-5">{{ selectedJugador.posicion }}</p>
+          </div>
+        </div>
+
+        <hr />
+
+        <h5 class="mb-3">
+          <i class="fas fa-chart-line me-2"></i>Estadísticas
+        </h5>
+
+        <div class="row g-3">
+          <div *ngIf="selectedJugador.estadisticas?.partidosJugados !== undefined" class="col-6 col-md-4">
+            <div class="card bg-light text-center">
+              <div class="card-body">
+                <small class="text-muted">Partidos</small>
+                <p class="fs-4 fw-bold mb-0">
+                  {{ selectedJugador.estadisticas.partidosJugados }}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div *ngIf="selectedJugador.estadisticas?.goles !== undefined" class="col-6 col-md-4">
+            <div class="card bg-light text-center">
+              <div class="card-body">
+                <small class="text-muted">Goles</small>
+                <p class="fs-4 fw-bold text-success mb-0">
+                  {{ selectedJugador.estadisticas.goles }}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div *ngIf="selectedJugador.estadisticas?.asistencias !== undefined" class="col-6 col-md-4">
+            <div class="card bg-light text-center">
+              <div class="card-body">
+                <small class="text-muted">Asistencias</small>
+                <p class="fs-4 fw-bold text-primary mb-0">
+                  {{ selectedJugador.estadisticas.asistencias }}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div *ngIf="selectedJugador.estadisticas?.tarjetasAmarillas !== undefined" class="col-6 col-md-4">
+            <div class="card bg-light text-center">
+              <div class="card-body">
+                <small class="text-muted">T. Amarillas</small>
+                <p class="fs-4 fw-bold text-warning mb-0">
+                  {{ selectedJugador.estadisticas.tarjetasAmarillas }}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div *ngIf="selectedJugador.estadisticas?.tarjetasRojas !== undefined" class="col-6 col-md-4">
+            <div class="card bg-light text-center">
+              <div class="card-body">
+                <small class="text-muted">T. Rojas</small>
+                <p class="fs-4 fw-bold text-danger mb-0">
+                  {{ selectedJugador.estadisticas.tarjetasRojas }}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div *ngIf="selectedJugador.estadisticas?.puntos !== undefined" class="col-6 col-md-4">
+            <div class="card bg-light text-center">
+              <div class="card-body">
+                <small class="text-muted">Puntos</small>
+                <p class="fs-4 fw-bold mb-0">
+                  {{ selectedJugador.estadisticas.puntos }}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div *ngIf="selectedJugador.estadisticas?.rebotes !== undefined" class="col-6 col-md-4">
+            <div class="card bg-light text-center">
+              <div class="card-body">
+                <small class="text-muted">Rebotes</small>
+                <p class="fs-4 fw-bold mb-0">
+                  {{ selectedJugador.estadisticas.rebotes }}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div *ngIf="selectedJugador.estadisticas?.aces !== undefined" class="col-6 col-md-4">
+            <div class="card bg-light text-center">
+              <div class="card-body">
+                <small class="text-muted">Aces</small>
+                <p class="fs-4 fw-bold mb-0">
+                  {{ selectedJugador.estadisticas.aces }}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div *ngIf="selectedJugador.estadisticas?.bloqueos !== undefined" class="col-6 col-md-4">
+            <div class="card bg-light text-center">
+              <div class="card-body">
+                <small class="text-muted">Bloqueos</small>
+                <p class="fs-4 fw-bold mb-0">
+                  {{ selectedJugador.estadisticas.bloqueos }}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>

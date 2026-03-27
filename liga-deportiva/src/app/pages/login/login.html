@@ -1,0 +1,102 @@
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-12 col-md-8 col-lg-5">
+      <div class="mb-4">
+        <a routerLink="/" class="text-decoration-none text-dark">
+          <i class="fas fa-arrow-left me-2"></i>Volver al Inicio
+        </a>
+      </div>
+
+      <div class="card shadow">
+        <div class="card-body p-5">
+          <div class="text-center mb-4">
+            <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3"
+                 style="width: 80px; height: 80px;">
+              <i class="fas fa-user fs-1"></i>
+            </div>
+            <h1 class="h2 fw-bold">Iniciar Sesión</h1>
+            <p class="text-muted">Accede a tu cuenta de Liga Deportiva</p>
+          </div>
+
+          <form (ngSubmit)="iniciarSesion()">
+            <div class="mb-3">
+              <label for="email" class="form-label fw-bold">Email</label>
+              <div class="input-group input-group-lg">
+                <span class="input-group-text bg-light">
+                  <i class="fas fa-envelope"></i>
+                </span>
+                <input
+                  type="email"
+                  class="form-control"
+                  id="email"
+                  name="email"
+                  [(ngModel)]="formulario.email"
+                  placeholder="tu@email.com"
+                  required
+                />
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="password" class="form-label fw-bold">Contraseña</label>
+              <div class="input-group input-group-lg">
+                <span class="input-group-text bg-light">
+                  <i class="fas fa-lock"></i>
+                </span>
+                <input
+                  [type]="mostrarPassword ? 'text' : 'password'"
+                  class="form-control"
+                  id="password"
+                  name="password"
+                  [(ngModel)]="formulario.password"
+                  placeholder="Tu contraseña"
+                  required
+                />
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary"
+                  (click)="togglePassword()"
+                >
+                  <i [class]="mostrarPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
+                </button>
+              </div>
+            </div>
+
+            <div class="alert alert-danger" *ngIf="errorMensaje">
+              <i class="fas fa-exclamation-triangle me-2"></i>{{ errorMensaje }}
+            </div>
+
+            <div class="d-grid gap-2 mb-4">
+              <button type="submit" class="btn btn-primary btn-lg">
+                <i class="fas fa-sign-in-alt me-2"></i>Iniciar Sesión
+              </button>
+            </div>
+
+            <div class="text-center">
+              <a href="#" class="text-decoration-none small">¿Olvidaste tu contraseña?</a>
+            </div>
+          </form>
+
+          <hr class="my-4" />
+
+          <div class="text-center">
+            <p class="text-muted mb-2">¿No tienes una cuenta?</p>
+            <a routerLink="/registro" class="btn btn-outline-primary btn-lg">
+              <i class="fas fa-user-plus me-2"></i>Crear Cuenta
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Información adicional -->
+      <div class="card mt-3 bg-light">
+        <div class="card-body text-center">
+          <p class="small text-muted mb-0">
+            <i class="fas fa-shield-alt me-2"></i>
+            Tu información está protegida y segura
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

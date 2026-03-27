@@ -1,0 +1,281 @@
+<div class="container-fluid py-5">
+  <div class="row justify-content-center">
+    <div class="col-12 col-xl-11">
+      <div class="header-section mb-5">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+          <div>
+            <h1 class="display-5 fw-bold mb-2">
+              <i class="fas fa-cog me-3 text-primary"></i>
+              Gestión de Partidos
+            </h1>
+            <p class="text-muted mb-0">Panel de administración para crear y gestionar partidos</p>
+          </div>
+          <button
+            class="btn btn-primary btn-lg shadow-sm"
+            (click)="nuevoPartido()"
+            *ngIf="!mostrarFormulario">
+            <i class="fas fa-plus-circle me-2"></i>
+            Nuevo Partido
+          </button>
+        </div>
+      </div>
+
+      <div class="card shadow-lg mb-4" *ngIf="mostrarFormulario">
+        <div class="card-header bg-primary text-white">
+          <h3 class="card-title mb-0">
+            <i class="fas fa-edit me-2"></i>
+            {{ editando ? 'Editar Partido' : 'Nuevo Partido' }}
+          </h3>
+        </div>
+        <div class="card-body p-4">
+          <form>
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">Deporte *</label>
+                <select
+                  class="form-select"
+                  [(ngModel)]="partidoForm.deporte"
+                  name="deporte"
+                  required>
+                  <option value="">Seleccionar deporte</option>
+                  <option *ngFor="let deporte of deportes" [value]="deporte">{{ deporte }}</option>
+                </select>
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">Estado *</label>
+                <select
+                  class="form-select"
+                  [(ngModel)]="partidoForm.estado"
+                  name="estado"
+                  required>
+                  <option *ngFor="let estado of estados" [value]="estado.value">
+                    {{ estado.label }}
+                  </option>
+                </select>
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">Equipo Local *</label>
+                <select
+                  class="form-select"
+                  [(ngModel)]="partidoForm.equipoLocal"
+                  name="equipoLocal"
+                  required>
+                  <option value="">Seleccionar equipo local</option>
+                  <option
+                    *ngFor="let equipo of filtrarEquiposPorDeporte()"
+                    [value]="equipo.id"
+                    [disabled]="equipo.id === partidoForm.equipoVisitante">
+                    {{ equipo.nombre }} ({{ equipo.deporte }})
+                  </option>
+                </select>
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">Equipo Visitante *</label>
+                <select
+                  class="form-select"
+                  [(ngModel)]="partidoForm.equipoVisitante"
+                  name="equipoVisitante"
+                  required>
+                  <option value="">Seleccionar equipo visitante</option>
+                  <option
+                    *ngFor="let equipo of filtrarEquiposPorDeporte()"
+                    [value]="equipo.id"
+                    [disabled]="equipo.id === partidoForm.equipoLocal">
+                    {{ equipo.nombre }} ({{ equipo.deporte }})
+                  </option>
+                </select>
+              </div>
+
+              <div class="col-md-4">
+                <label class="form-label fw-semibold">Fecha *</label>
+                <input
+                  type="date"
+                  class="form-control"
+                  [(ngModel)]="partidoForm.fecha"
+                  name="fecha"
+                  required>
+              </div>
+
+              <div class="col-md-4">
+                <label class="form-label fw-semibold">Hora *</label>
+                <input
+                  type="time"
+                  class="form-control"
+                  [(ngModel)]="partidoForm.hora"
+                  name="hora"
+                  required>
+              </div>
+
+              <div class="col-md-4">
+                <label class="form-label fw-semibold">Jornada</label>
+                <input
+                  type="number"
+                  class="form-control"
+                  [(ngModel)]="partidoForm.jornada"
+                  name="jornada"
+                  min="1">
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">Ubicación *</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  [(ngModel)]="partidoForm.ubicacion"
+                  name="ubicacion"
+                  placeholder="Ej: Estadio Municipal"
+                  required>
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">Árbitro</label>
+                <select
+                  class="form-select"
+                  [(ngModel)]="partidoForm.arbitroId"
+                  name="arbitroId">
+                  <option value="">Sin asignar</option>
+                  <option
+                    *ngFor="let arbitro of filtrarArbitrosPorDeporte()"
+                    [value]="arbitro.id">
+                    {{ arbitro.nombre }} ({{ arbitro.deporte }})
+                  </option>
+                </select>
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">Goles Local</label>
+                <input
+                  type="number"
+                  class="form-control"
+                  [(ngModel)]="partidoForm.golesLocal"
+                  name="golesLocal"
+                  min="0">
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">Goles Visitante</label>
+                <input
+                  type="number"
+                  class="form-control"
+                  [(ngModel)]="partidoForm.golesVisitante"
+                  name="golesVisitante"
+                  min="0">
+              </div>
+
+              <div class="col-12">
+                <label class="form-label fw-semibold">Observaciones</label>
+                <textarea
+                  class="form-control"
+                  [(ngModel)]="partidoForm.observaciones"
+                  name="observaciones"
+                  rows="3"
+                  placeholder="Notas adicionales sobre el partido..."></textarea>
+              </div>
+            </div>
+
+            <div class="d-flex gap-3 justify-content-end mt-4">
+              <button
+                type="button"
+                class="btn btn-secondary px-4"
+                (click)="cancelarFormulario()">
+                <i class="fas fa-times me-2"></i>
+                Cancelar
+              </button>
+              <button
+                type="button"
+                class="btn btn-primary px-4"
+                (click)="guardarPartido()">
+                <i class="fas fa-save me-2"></i>
+                {{ editando ? 'Actualizar' : 'Guardar' }}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div class="card shadow-lg">
+        <div class="card-header bg-light">
+          <h3 class="card-title mb-0">
+            <i class="fas fa-list me-2"></i>
+            Listado de Partidos ({{ partidos.length }})
+          </h3>
+        </div>
+        <div class="card-body p-0">
+          <div class="table-responsive">
+            <table class="table table-hover table-striped mb-0">
+              <thead class="table-dark">
+                <tr>
+                  <th>Deporte</th>
+                  <th>Equipos</th>
+                  <th>Fecha/Hora</th>
+                  <th>Ubicación</th>
+                  <th>Árbitro</th>
+                  <th>Resultado</th>
+                  <th>Estado</th>
+                  <th class="text-center">Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let partido of partidos">
+                  <td>
+                    <span class="badge bg-secondary">{{ partido.deporte }}</span>
+                  </td>
+                  <td>
+                    <div class="d-flex flex-column">
+                      <span class="fw-bold">{{ getEquipoNombre(partido.equipoLocal) }}</span>
+                      <span class="text-muted small">vs</span>
+                      <span class="fw-bold">{{ getEquipoNombre(partido.equipoVisitante) }}</span>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="d-flex flex-column">
+                      <span>{{ partido.fecha | date: 'dd/MM/yyyy' }}</span>
+                      <span class="text-muted small">{{ partido.hora }}</span>
+                    </div>
+                  </td>
+                  <td>{{ partido.ubicacion }}</td>
+                  <td>{{ getArbitroNombre(partido.arbitroId) }}</td>
+                  <td>
+                    <span class="badge bg-primary fs-6">
+                      {{ partido.golesLocal }} - {{ partido.golesVisitante }}
+                    </span>
+                  </td>
+                  <td>
+                    <span [class]="getEstadoClass(partido.estado)">
+                      {{ getEstadoLabel(partido.estado) }}
+                    </span>
+                  </td>
+                  <td class="text-center">
+                    <div class="btn-group" role="group">
+                      <button
+                        class="btn btn-sm btn-warning"
+                        (click)="editarPartido(partido)"
+                        title="Editar">
+                        <i class="fas fa-edit"></i>
+                      </button>
+                      <button
+                        class="btn btn-sm btn-danger"
+                        (click)="eliminarPartido(partido.id!)"
+                        title="Eliminar">
+                        <i class="fas fa-trash"></i>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+                <tr *ngIf="partidos.length === 0">
+                  <td colspan="8" class="text-center text-muted py-5">
+                    <i class="fas fa-inbox fa-3x mb-3 d-block"></i>
+                    No hay partidos registrados. Crea uno nuevo para comenzar.
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
