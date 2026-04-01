@@ -39,7 +39,7 @@ export const routes: Routes = [
   { path: 'equipos', component: Equipos },
   { path: 'jugadores', component: Jugadores },
   { path: 'arbitros', component: Arbitros },
-  { path: 'resultados', component: Resultados },
+  { path: 'resultados', component: Resultados, runGuardsAndResolvers: 'always' },
   { path: 'clasificaciones', component: Clasificaciones },
   { path: 'contacto', component: Contacto },
   { path: 'login', component: Login },

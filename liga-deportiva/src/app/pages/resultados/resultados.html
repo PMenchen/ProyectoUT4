@@ -1,3 +1,4 @@
+<p>{{ cargando }}</p>
 <div class="container py-5">
   <div class="mb-4">
     <a routerLink="/" class="text-decoration-none text-dark">
@@ -8,12 +9,12 @@
   <h1 class="display-4 fw-bold mb-4 text-center">Resultados Recientes</h1>
   <p class="text-center text-muted mb-5">Últimos partidos finalizados</p>
 
-  <div *ngIf="cargando" class="text-center py-5">
+  <!-- <div *ngIf="cargando" class="text-center py-5">
     <div class="spinner-border text-primary" role="status">
       <span class="visually-hidden">Cargando...</span>
     </div>
     <p class="mt-3 text-muted">Cargando resultados...</p>
-  </div>
+  </div> -->
 
   <div *ngIf="error" class="alert alert-danger" role="alert">
     <i class="fas fa-exclamation-triangle me-2"></i>{{ error }}
@@ -44,7 +45,7 @@
                   <i [class]="'fas ' + getDeporteIcon(partido.deporte)"></i>
                 </span>
               </td>
-              <td class="fw-bold">{{ getNombreEquipo(partido.equipoLocal) }}</td>
+              <td class="fw-bold">{{ getNombreEquipo(partido.equipo_local_id) }}</td>
               <td class="text-center">
                 <div class="d-flex justify-content-center align-items-center gap-2">
                   <span [class]="'badge bg-' + getResultadoBadge(partido, true) + ' fs-6'">
@@ -56,7 +57,7 @@
                   </span>
                 </div>
               </td>
-              <td class="fw-bold">{{ getNombreEquipo(partido.equipoVisitante) }}</td>
+              <td class="fw-bold">{{ getNombreEquipo(partido.equipo_visitante_id) }}</td>
               <td class="text-center text-muted">
                 <i class="fas fa-calendar me-2"></i>{{ formatearFecha(partido.fecha) }}
               </td>
@@ -86,7 +87,7 @@
 
                 <div class="d-flex justify-content-between align-items-center mb-3">
                   <div class="text-center flex-grow-1">
-                    <p class="fw-bold mb-1">{{ getNombreEquipo(partido.equipoLocal) }}</p>
+                    <p class="fw-bold mb-1">{{ getNombreEquipo(partido.equipo_local_id) }}</p>
                     <span [class]="'badge bg-' + getResultadoBadge(partido, true) + ' fs-5'">
                       {{ partido.golesLocal }}
                     </span>
@@ -95,7 +96,7 @@
                     <span class="text-muted fs-5">-</span>
                   </div>
                   <div class="text-center flex-grow-1">
-                    <p class="fw-bold mb-1">{{ getNombreEquipo(partido.equipoVisitante) }}</p>
+                    <p class="fw-bold mb-1">{{ getNombreEquipo(partido.equipo_visitante_id) }}</p>
                     <span [class]="'badge bg-' + getResultadoBadge(partido, false) + ' fs-5'">
                       {{ partido.golesVisitante }}
                     </span>
