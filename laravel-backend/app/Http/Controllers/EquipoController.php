@@ -20,7 +20,7 @@ class EquipoController extends Controller
      */
     public function index(): JsonResponse
     {
-        $equipos = Equipo::with('jugadores')->get();
+        $equipos = Equipo::with(['jugadores', 'capitan'])->get();
         
         return response()->json([
             'success' => true,
@@ -37,7 +37,7 @@ class EquipoController extends Controller
      */
     public function show(int $id): JsonResponse
     {
-        $equipo = Equipo::with('jugadores')->find($id);
+        $equipo = Equipo::with(['jugadores', 'capitan'])->find($id);
 
         if (!$equipo) {
             return response()->json([

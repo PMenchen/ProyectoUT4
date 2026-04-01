@@ -20,10 +20,11 @@ class User extends Authenticatable
      * Campos que se pueden asignar masivamente
      */
     protected $fillable = [
-        'name',
+        'nombre',
         'email',
         'password',
-        'role',
+        'tipo',
+        'equipoId',
     ];
 
     /**
@@ -50,6 +51,14 @@ class User extends Authenticatable
      */
     public function isAdmin(): bool
     {
-        return $this->role === 'admin';
+        return $this->tipo === 'admin';
+    }
+
+    /**
+     * Relación con equipo (opcional)
+     */
+    public function equipo()
+    {
+        return $this->belongsTo(Equipo::class, 'equipoId');
     }
 }

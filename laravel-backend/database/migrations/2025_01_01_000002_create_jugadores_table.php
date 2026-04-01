@@ -18,8 +18,11 @@ return new class extends Migration
             $table->id();
             $table->string('nombre');
             $table->string('posicion'); // Ej: Portero, Defensa, Centrocampista, Delantero
-            $table->integer('dorsal');
+            $table->integer('numero');
             $table->foreignId('equipo_id')->constrained('equipos')->onDelete('cascade');
+            $table->string('deporte');
+            $table->json('estadisticas')->nullable();
+            $table->string('foto')->nullable();
             $table->timestamps();
         });
     }

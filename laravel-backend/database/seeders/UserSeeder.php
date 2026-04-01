@@ -18,34 +18,77 @@ class UserSeeder extends Seeder
     {
         // Usuario administrador
         User::create([
-            'name' => 'Administrador',
+            'nombre' => 'Administrador',
             'email' => 'admin@ligamaestre.com',
             'password' => Hash::make('admin123'),
-            'role' => 'admin',
+            'tipo' => 'admin',
         ]);
 
         // Usuario normal
         User::create([
-            'name' => 'Usuario Demo',
+            'nombre' => 'Usuario Demo',
             'email' => 'usuario@ligamaestre.com',
             'password' => Hash::make('usuario123'),
-            'role' => 'usuario',
+            'tipo' => 'usuario',
         ]);
 
         // Árbitro
         User::create([
-            'name' => 'Árbitro Principal',
+            'nombre' => 'Árbitro Principal',
             'email' => 'arbitro@ligamaestre.com',
             'password' => Hash::make('arbitro123'),
-            'role' => 'arbitro',
+            'tipo' => 'arbitro',
         ]);
 
         // Capitán
+        // User::create([
+        //     'nombre' => 'Capitán Equipo',
+        //     'email' => 'capitan@ligamaestre.com',
+        //     'password' => Hash::make('capitan123'),
+        //     'tipo' => 'capitan',
+        // ]);
+
+        // Capitanes de equipos
         User::create([
-            'name' => 'Capitán Equipo',
-            'email' => 'capitan@ligamaestre.com',
+            'nombre' => 'Carlos García Martínez',
+            'email' => 'carlos.garcia@cdmanchego.com',
             'password' => Hash::make('capitan123'),
-            'role' => 'capitan',
+            'tipo' => 'capitan',
+        ]);
+
+        User::create([
+            'nombre' => 'Miguel López Ruiz',
+            'email' => 'miguel.lopez@clubalmagro.com',
+            'password' => Hash::make('capitan123'),
+            'tipo' => 'capitan',
+        ]);
+
+        User::create([
+            'nombre' => 'Javier Sánchez Torres',
+            'email' => 'javier.sanchez@vinaalbali.com',
+            'password' => Hash::make('capitan123'),
+            'tipo' => 'capitan',
+        ]);
+
+        User::create([
+            'nombre' => 'Antonio Fernández Gil',
+            'email' => 'antonio.fernandez@cbciudadreal.com',
+            'password' => Hash::make('capitan123'),
+            'tipo' => 'capitan',
+        ]);
+
+        User::create([
+            'nombre' => 'Luis Martín Gómez',
+            'email' => 'luis.martin@cvpuertollano.com',
+            'password' => Hash::make('capitan123'),
+            'tipo' => 'capitan',
+        ]);
+
+        User::create([
+            'nombre' => 'David Rodríguez Pérez',
+            'email' => 'david.rodriguez@bmmiguelturra.com',
+            'password' => Hash::make('capitan123'),
+            'tipo' => 'capitan',
         ]);
     }
 }

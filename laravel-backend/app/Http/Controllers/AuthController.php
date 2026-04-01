@@ -63,14 +63,16 @@ class AuthController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|string|min:6|confirmed',
-            'role' => 'sometimes|in:usuario,arbitro,capitan',
+            'tipo' => 'sometimes|in:usuario,arbitro,capitan,admin',
+            'equipoId' => 'sometimes|nullable|exists:equipos,id',
         ]);
 
         $user = User::create([
             'name' => $validated['name'],
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
-            'role' => $validated['role'] ?? 'usuario',
+            'tipo' => $validated['tipo'] ?? 'usuario',
+            'equipoId' => $validated['equipoId'] ?? null,
         ]);
 
         $token = $user->createToken('auth-token')->plainTextToken;

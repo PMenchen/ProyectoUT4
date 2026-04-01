@@ -20,7 +20,7 @@ class PartidoController extends Controller
      */
     public function index(): JsonResponse
     {
-        $partidos = Partido::with(['liga', 'equipoLocal', 'equipoVisitante'])->get();
+        $partidos = Partido::with(['liga', 'equipoLocal', 'equipoVisitante', 'arbitro'])->get();
         
         return response()->json([
             'success' => true,
@@ -37,7 +37,7 @@ class PartidoController extends Controller
      */
     public function show(int $id): JsonResponse
     {
-        $partido = Partido::with(['liga', 'equipoLocal', 'equipoVisitante'])->find($id);
+        $partido = Partido::with(['liga', 'equipoLocal', 'equipoVisitante', 'arbitro'])->find($id);
 
         if (!$partido) {
             return response()->json([
@@ -66,12 +66,20 @@ class PartidoController extends Controller
             'liga_id' => 'required|exists:ligas,id',
             'equipo_local_id' => 'required|exists:equipos,id',
             'equipo_visitante_id' => 'required|exists:equipos,id|different:equipo_local_id',
+            'deporte' => 'required|string',
             'fecha' => 'required|date',
-            'resultado' => 'nullable|string|regex:/^\d+-\d+$/',
+            'hora' => 'required',
+            'ubicacion' => 'required|string',
+            'arbitro_id' => 'nullable|exists:users,id',
+            'goles_local' => 'integer|min:0',
+            'goles_visitante' => 'integer|min:0',
+            'estado' => 'required|in:pendiente,en_progreso,finalizado,cancelado',
+            'jornada' => 'nullable|integer',
+            'observaciones' => 'nullable|string',
         ]);
 
         $partido = Partido::create($validated);
-        $partido->load(['liga', 'equipoLocal', 'equipoVisitante']);
+        $partido->load(['liga', 'equipoLocal', 'equipoVisitante', 'arbitro']);
 
         return response()->json([
             'success' => true,
@@ -103,12 +111,20 @@ class PartidoController extends Controller
             'liga_id' => 'sometimes|required|exists:ligas,id',
             'equipo_local_id' => 'sometimes|required|exists:equipos,id',
             'equipo_visitante_id' => 'sometimes|required|exists:equipos,id',
+            'deporte' => 'sometimes|required|string',
             'fecha' => 'sometimes|required|date',
-            'resultado' => 'nullable|string|regex:/^\d+-\d+$/',
+            'hora' => 'sometimes|required',
+            'ubicacion' => 'sometimes|required|string',
+            'arbitro_id' => 'nullable|exists:users,id',
+            'goles_local' => 'integer|min:0',
+            'goles_visitante' => 'integer|min:0',
+            'estado' => 'sometimes|required|in:pendiente,en_progreso,finalizado,cancelado',
+            'jornada' => 'nullable|integer',
+            'observaciones' => 'nullable|string',
         ]);
 
         $partido->update($validated);
-        $partido->load(['liga', 'equipoLocal', 'equipoVisitante']);
+        $partido->load(['liga', 'equipoLocal', 'equipoVisitante', 'arbitro']);
 
         return response()->json([
             'success' => true,
@@ -151,7 +167,7 @@ class PartidoController extends Controller
     public function porLiga(int $ligaId): JsonResponse
     {
         $partidos = Partido::where('liga_id', $ligaId)
-            ->with(['liga', 'equipoLocal', 'equipoVisitante'])
+            ->with(['liga', 'equipoLocal', 'equipoVisitante', 'arbitro'])
             ->orderBy('fecha')
             ->get();
 
@@ -159,6 +175,41 @@ class PartidoController extends Controller
             'success' => true,
             'data' => $partidos,
             'message' => 'Partidos de la liga obtenidos correctamente'
+        ]);
+    }
+
+    /**
+     * Obtener partidos por árbitro
+     */
+    public function porArbitro(int $arbitroId): JsonResponse
+    {
+        $partidos = Partido::where('arbitro_id', $arbitroId)
+            ->with(['liga', 'equipoLocal', 'equipoVisitante', 'arbitro'])
+            ->orderBy('fecha')
+            ->get();
+
+        return response()->json([
+            'success' => true,
+            'data' => $partidos,
+            'message' => 'Partidos del árbitro obtenidos correctamente'
+        ]);
+    }
+
+    /**
+     * Obtener partidos por equipo
+     */
+    public function porEquipo(int $equipoId): JsonResponse
+    {
+        $partidos = Partido::where('equipo_local_id', $equipoId)
+            ->orWhere('equipo_visitante_id', $equipoId)
+            ->with(['liga', 'equipoLocal', 'equipoVisitante', 'arbitro'])
+            ->orderBy('fecha')
+            ->get();
+
+        return response()->json([
+            'success' => true,
+            'data' => $partidos,
+            'message' => 'Partidos del equipo obtenidos correctamente'
         ]);
     }
 }

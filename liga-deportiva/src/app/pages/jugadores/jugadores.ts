@@ -41,7 +41,7 @@ export class Jugadores implements OnInit {
 
     this.db.getJugadores().subscribe({
       next: (jugadores) => {
-        console.log(jugadores);
+        // console.log(jugadores);
         this.cargando = false;
         this.jugadores = jugadores;
       },

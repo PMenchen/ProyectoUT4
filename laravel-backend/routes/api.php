@@ -6,6 +6,7 @@ use App\Http\Controllers\JugadorController;
 use App\Http\Controllers\LigaController;
 use App\Http\Controllers\PartidoController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ArbitroController;
 
 /*
 |--------------------------------------------------------------------------
@@ -54,6 +55,12 @@ Route::get('/ligas/{id}', [LigaController::class, 'show']);
 Route::get('/partidos', [PartidoController::class, 'index']);
 Route::get('/partidos/{id}', [PartidoController::class, 'show']);
 Route::get('/ligas/{ligaId}/partidos', [PartidoController::class, 'porLiga']);
+Route::get('/partidos/arbitro/{arbitroId}', [PartidoController::class, 'porArbitro']);
+Route::get('/partidos/equipo/{equipoId}', [PartidoController::class, 'porEquipo']);
+
+// Árbitros - Rutas públicas
+Route::get('/arbitros', [ArbitroController::class, 'index']);
+Route::get('/arbitros/{id}', [ArbitroController::class, 'show']);
 
 // ============================================
 // RUTAS PROTEGIDAS (Requieren Admin)
@@ -79,4 +86,9 @@ Route::middleware(['auth:sanctum', 'admin'])->group(function () {
     Route::post('/partidos', [PartidoController::class, 'store']);
     Route::put('/partidos/{id}', [PartidoController::class, 'update']);
     Route::delete('/partidos/{id}', [PartidoController::class, 'destroy']);
+
+    // Árbitros - CRUD completo (solo admin)
+    Route::post('/arbitros', [ArbitroController::class, 'store']);
+    Route::put('/arbitros/{id}', [ArbitroController::class, 'update']);
+    Route::delete('/arbitros/{id}', [ArbitroController::class, 'destroy']);
 });

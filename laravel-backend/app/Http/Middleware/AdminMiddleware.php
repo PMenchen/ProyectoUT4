@@ -32,7 +32,7 @@ class AdminMiddleware
         }
 
         // Verificar si el usuario es administrador
-        if ($request->user()->role !== 'admin') {
+        if ($request->user()->tipo !== 'admin') {
             return response()->json([
                 'success' => false,
                 'message' => 'Acceso denegado. Se requiere rol de administrador.'

@@ -22,53 +22,77 @@ class JugadorSeeder extends Seeder
 
         // Jugadores del CD Manchego
         $jugadoresMaestre = [
-            ['nombre' => 'Carlos García', 'posicion' => 'Portero', 'dorsal' => 1],
-            ['nombre' => 'Miguel López', 'posicion' => 'Defensa', 'dorsal' => 4],
-            ['nombre' => 'David Martín', 'posicion' => 'Centrocampista', 'dorsal' => 8],
-            ['nombre' => 'Javier Sánchez', 'posicion' => 'Delantero', 'dorsal' => 9],
-            ['nombre' => 'Pablo Ruiz', 'posicion' => 'Centrocampista', 'dorsal' => 10],
+            ['nombre' => 'Carlos García', 'posicion' => 'Portero', 'numero' => 1],
+            ['nombre' => 'Miguel López', 'posicion' => 'Defensa', 'numero' => 4],
+            ['nombre' => 'David Martín', 'posicion' => 'Centrocampista', 'numero' => 8],
+            ['nombre' => 'Javier Sánchez', 'posicion' => 'Delantero', 'numero' => 9],
+            ['nombre' => 'Pablo Ruiz', 'posicion' => 'Centrocampista', 'numero' => 10],
         ];
 
         foreach ($jugadoresMaestre as $jugador) {
             Jugador::create([
                 'nombre' => $jugador['nombre'],
                 'posicion' => $jugador['posicion'],
-                'dorsal' => $jugador['dorsal'],
+                'numero' => $jugador['numero'],
                 'equipo_id' => $equipoMaestre->id,
+                'deporte' => 'Fútbol',
+                'estadisticas' => [
+                    'partidosJugados' => rand(10, 30),
+                    'goles' => rand(0, 15),
+                    'asistencias' => rand(0, 10),
+                    'tarjetasAmarillas' => rand(0, 5),
+                    'tarjetasRojas' => rand(0, 2),
+                ],
             ]);
         }
 
         // Jugadores del Club Almagro
         $jugadoresCalatrava = [
-            ['nombre' => 'Antonio Pérez', 'posicion' => 'Portero', 'dorsal' => 1],
-            ['nombre' => 'Luis Fernández', 'posicion' => 'Defensa', 'dorsal' => 2],
-            ['nombre' => 'Sergio Díaz', 'posicion' => 'Centrocampista', 'dorsal' => 6],
-            ['nombre' => 'Raúl Torres', 'posicion' => 'Delantero', 'dorsal' => 11],
+            ['nombre' => 'Antonio Pérez', 'posicion' => 'Portero', 'numero' => 1],
+            ['nombre' => 'Luis Fernández', 'posicion' => 'Defensa', 'numero' => 2],
+            ['nombre' => 'Sergio Díaz', 'posicion' => 'Centrocampista', 'numero' => 6],
+            ['nombre' => 'Raúl Torres', 'posicion' => 'Delantero', 'numero' => 11],
         ];
 
         foreach ($jugadoresCalatrava as $jugador) {
             Jugador::create([
                 'nombre' => $jugador['nombre'],
                 'posicion' => $jugador['posicion'],
-                'dorsal' => $jugador['dorsal'],
+                'numero' => $jugador['numero'],
                 'equipo_id' => $equipoCalatrava->id,
+                'deporte' => 'Fútbol',
+                'estadisticas' => [
+                    'partidosJugados' => rand(10, 30),
+                    'goles' => rand(0, 15),
+                    'asistencias' => rand(0, 10),
+                    'tarjetasAmarillas' => rand(0, 5),
+                    'tarjetasRojas' => rand(0, 2),
+                ],
             ]);
         }
 
         // Jugadores del Viña Albali Valdepeñas
         $jugadoresManchego = [
-            ['nombre' => 'Fernando Morales', 'posicion' => 'Portero', 'dorsal' => 13],
-            ['nombre' => 'Alejandro Vega', 'posicion' => 'Defensa', 'dorsal' => 3],
-            ['nombre' => 'Roberto Castro', 'posicion' => 'Centrocampista', 'dorsal' => 5],
-            ['nombre' => 'Daniel Romero', 'posicion' => 'Delantero', 'dorsal' => 7],
+            ['nombre' => 'Fernando Morales', 'posicion' => 'Portero', 'numero' => 13],
+            ['nombre' => 'Alejandro Vega', 'posicion' => 'Defensa', 'numero' => 3],
+            ['nombre' => 'Roberto Castro', 'posicion' => 'Centrocampista', 'numero' => 5],
+            ['nombre' => 'Daniel Romero', 'posicion' => 'Delantero', 'numero' => 7],
         ];
 
         foreach ($jugadoresManchego as $jugador) {
             Jugador::create([
                 'nombre' => $jugador['nombre'],
                 'posicion' => $jugador['posicion'],
-                'dorsal' => $jugador['dorsal'],
+                'numero' => $jugador['numero'],
                 'equipo_id' => $equipoManchego->id,
+                'deporte' => 'Fútbol',
+                'estadisticas' => [
+                    'partidosJugados' => rand(10, 30),
+                    'goles' => rand(0, 15),
+                    'asistencias' => rand(0, 10),
+                    'tarjetasAmarillas' => rand(0, 5),
+                    'tarjetasRojas' => rand(0, 2),
+                ],
             ]);
         }
     }

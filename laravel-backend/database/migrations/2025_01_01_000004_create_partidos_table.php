@@ -16,11 +16,19 @@ return new class extends Migration
     {
         Schema::create('partidos', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('liga_id')->constrained('ligas')->onDelete('cascade');
+            $table->foreignId('liga_id')->nullable()->constrained('ligas')->onDelete('cascade');
             $table->foreignId('equipo_local_id')->constrained('equipos')->onDelete('cascade');
             $table->foreignId('equipo_visitante_id')->constrained('equipos')->onDelete('cascade');
-            $table->dateTime('fecha');
-            $table->string('resultado')->nullable(); // Ej: "2-1", "3-0"
+            $table->string('deporte'); // Fútbol, Baloncesto, Voleibol, Balonmano
+            $table->date('fecha');
+            $table->time('hora');
+            $table->string('ubicacion');
+            $table->foreignId('arbitro_id')->nullable()->constrained('users')->onDelete('set null');
+            $table->integer('goles_local')->default(0);
+            $table->integer('goles_visitante')->default(0);
+            $table->enum('estado', ['pendiente', 'en_progreso', 'finalizado', 'cancelado'])->default('pendiente');
+            $table->integer('jornada')->nullable();
+            $table->text('observaciones')->nullable();
             $table->timestamps();
         });
     }

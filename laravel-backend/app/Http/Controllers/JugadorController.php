@@ -65,8 +65,11 @@ class JugadorController extends Controller
         $validated = $request->validate([
             'nombre' => 'required|string|max:255',
             'posicion' => 'required|string|max:100',
-            'dorsal' => 'required|integer|min:1|max:99',
+            'numero' => 'required|integer|min:1|max:99',
             'equipo_id' => 'required|exists:equipos,id',
+            'deporte' => 'required|string|max:100',
+            'estadisticas' => 'nullable|array',
+            'foto' => 'nullable|string',
         ]);
 
         $jugador = Jugador::create($validated);
@@ -103,6 +106,9 @@ class JugadorController extends Controller
             'posicion' => 'sometimes|required|string|max:100',
             'dorsal' => 'sometimes|required|integer|min:1|max:99',
             'equipo_id' => 'sometimes|required|exists:equipos,id',
+            'deporte' => 'sometimes|required|string|max:100',
+            'estadisticas' => 'sometimes|nullable|array',
+            'foto' => 'sometimes|nullable|string',
         ]);
 
         $jugador->update($validated);

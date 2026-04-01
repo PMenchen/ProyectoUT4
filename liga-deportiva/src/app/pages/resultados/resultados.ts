@@ -31,16 +31,10 @@ export class Resultados implements OnInit {
     this.cargando = true;
     this.error = '';
 
-    if (!this.auth.isAuthenticated()) {
-      this.error = 'Debes iniciar sesión para ver los partidos';
-      this.cargando = false;
-      return;
-    }
-
     this.db.getPartidos().subscribe({
-      next: (response: any) => {
+      next: (partidos: Partido[]) => {
         this.cargando = false;
-        this.partidos = (response.data || response).filter((p: Partido) => p.estado === 'finalizado');
+        this.partidos = partidos.filter((p: Partido) => p.estado === 'finalizado');
       },
       error: (error) => {
         this.cargando = false;
