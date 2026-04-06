@@ -7,6 +7,7 @@ import { Equipo } from '../models/equipo.model';
 import { Jugador } from '../models/jugador.model';
 import { Arbitro } from '../models/arbitro.model';
 import { Partido } from '../models/partido.model';
+import { environment } from '../../environments/environment';
 
 interface ApiResponse<T> {
   success: boolean;
@@ -18,7 +19,7 @@ interface ApiResponse<T> {
   providedIn: 'root',
 })
 export class Database {
-  private apiUrl = 'http://localhost:8000/api';
+  private apiUrl = environment.apiUrl;
 
   constructor(private http: HttpClient) {}
 
