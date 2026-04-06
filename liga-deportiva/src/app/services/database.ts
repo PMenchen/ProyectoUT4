@@ -19,8 +19,8 @@ interface ApiResponse<T> {
   providedIn: 'root',
 })
 export class Database {
-  // private apiUrl = 'http://localhost:8000/api';
-  private apiUrl = environment.apiUrl
+  private apiUrl = 'http://localhost:8000/api';
+  // private apiUrl = environment.apiUrl
 
   constructor(private http: HttpClient) {}
 
