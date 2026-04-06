@@ -1,52 +1,27 @@
+// database.ts
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable, of } from 'rxjs';
+import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
+import { Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { Equipo } from '../models/equipo.model';
 import { Jugador } from '../models/jugador.model';
 import { Arbitro } from '../models/arbitro.model';
 import { Partido } from '../models/partido.model';
 
-/**
- * Interfaz para las respuestas del API
- * Todas las respuestas del backend siguen este formato estandarizado
- */
 interface ApiResponse<T> {
   success: boolean;
   data: T;
   message?: string;
 }
 
-/**
- * Servicio de Base de Datos
- *
- * Este servicio centraliza todas las operaciones CRUD con el backend:
- * - Equipos: Gestión completa de equipos deportivos
- * - Jugadores: Gestión de jugadores y sus estadísticas
- * - Árbitros: Gestión de árbitros asignados a partidos
- * - Partidos: Gestión de partidos y resultados
- *
- * Implementa operaciones HTTP (GET, POST, PUT, DELETE) con:
- * - Autenticación mediante tokens JWT en headers
- * - Manejo centralizado de errores
- * - Transformación de respuestas del API
- * - Tipado fuerte con TypeScript
- */
 @Injectable({
   providedIn: 'root',
 })
 export class Database {
-  /** URL base del API backend */
   private apiUrl = 'http://localhost:8000/api';
 
   constructor(private http: HttpClient) {}
 
-  /**
-   * Construye los headers HTTP necesarios para las peticiones
-   * Incluye el token JWT si existe una sesión activa
-   *
-   * @returns HttpHeaders con Content-Type y Authorization
-   */
   private getHeaders(): HttpHeaders {
     const token = localStorage.getItem('token');
     return new HttpHeaders({
@@ -57,63 +32,38 @@ export class Database {
 
   // ==================== EQUIPOS ====================
 
-  /**
-   * Obtiene todos los equipos de la base de datos
-   * @returns Observable con array de equipos
-   */
   getEquipos(): Observable<Equipo[]> {
     return this.http.get<ApiResponse<Equipo[]>>(`${this.apiUrl}/equipos`, { headers: this.getHeaders() })
       .pipe(
         map(response => response.data || []),
-        catchError(this.handleError<Equipo[]>('getEquipos', []))
+        catchError(this.handleError('getEquipos'))
       );
   }
 
-  /**
-   * Obtiene un equipo específico por su ID
-   * @param id - ID del equipo
-   * @returns Observable con los datos del equipo
-   */
   getEquipo(id: number): Observable<Equipo> {
     return this.http.get<ApiResponse<Equipo>>(`${this.apiUrl}/equipos/${id}`, { headers: this.getHeaders() })
       .pipe(
         map(response => response.data),
-        catchError(this.handleError<Equipo>('getEquipo'))
+        catchError(this.handleError('getEquipo'))
       );
   }
 
-  /**
-   * Crea un nuevo equipo en la base de datos
-   * @param equipo - Datos del equipo a crear
-   * @returns Observable con el equipo creado
-   */
   createEquipo(equipo: Equipo): Observable<Equipo> {
     return this.http.post<ApiResponse<Equipo>>(`${this.apiUrl}/equipos`, equipo, { headers: this.getHeaders() })
       .pipe(
         map(response => response.data),
-        catchError(this.handleError<Equipo>('createEquipo'))
+        catchError(this.handleError('createEquipo'))
       );
   }
 
-  /**
-   * Actualiza un equipo existente
-   * @param id - ID del equipo a actualizar
-   * @param equipo - Datos parciales del equipo a actualizar
-   * @returns Observable con el equipo actualizado
-   */
   updateEquipo(id: number, equipo: Partial<Equipo>): Observable<Equipo> {
     return this.http.put<ApiResponse<Equipo>>(`${this.apiUrl}/equipos/${id}`, equipo, { headers: this.getHeaders() })
       .pipe(
         map(response => response.data),
-        catchError(this.handleError<Equipo>('updateEquipo'))
+        catchError(this.handleError('updateEquipo'))
       );
   }
 
-  /**
-   * Elimina un equipo de la base de datos
-   * @param id - ID del equipo a eliminar
-   * @returns Observable con confirmación de eliminación
-   */
   deleteEquipo(id: number): Observable<any> {
     return this.http.delete<ApiResponse<any>>(`${this.apiUrl}/equipos/${id}`, { headers: this.getHeaders() })
       .pipe(
@@ -124,35 +74,27 @@ export class Database {
 
   // ==================== JUGADORES ====================
 
-  /**
-   * Obtiene todos los jugadores de la base de datos
-   * @returns Observable con array de jugadores
-   */
   getJugadores(): Observable<Jugador[]> {
     return this.http.get<ApiResponse<Jugador[]>>(`${this.apiUrl}/jugadores`, { headers: this.getHeaders() })
       .pipe(
-        map(response => response.data || response),
-        catchError(this.handleError<Jugador[]>('getJugadores', []))
+        map(response => response.data || []),
+        catchError(this.handleError('getJugadores'))
       );
   }
-
-  // getJugadores(): Observable<Jugador[]> {
-  //   return this.http.get<any>(`${this.apiUrl}/jugadores`, { headers: this.getHeaders() })
-  //   .pipe(
-  //     map(response => {
-  //       console.log('Respuesta real:', response.data);
-  //       return response.data || response; 
-  //     }),
-  //     catchError(this.handleError<Jugador[]>('getJugadores', []))
-  //   );
-  // }
-
 
   getJugador(id: number): Observable<Jugador> {
     return this.http.get<ApiResponse<Jugador>>(`${this.apiUrl}/jugadores/${id}`, { headers: this.getHeaders() })
       .pipe(
         map(response => response.data),
-        catchError(this.handleError<Jugador>('getJugador'))
+        catchError(this.handleError('getJugador'))
+      );
+  }
+
+  getJugadoresByEquipo(equipoId: number): Observable<Jugador[]> {
+    return this.http.get<ApiResponse<Jugador[]>>(`${this.apiUrl}/equipos/${equipoId}/jugadores`, { headers: this.getHeaders() })
+      .pipe(
+        map(response => response.data || []),
+        catchError(this.handleError('getJugadoresByEquipo'))
       );
   }
 
@@ -160,7 +102,7 @@ export class Database {
     return this.http.post<ApiResponse<Jugador>>(`${this.apiUrl}/jugadores`, jugador, { headers: this.getHeaders() })
       .pipe(
         map(response => response.data),
-        catchError(this.handleError<Jugador>('createJugador'))
+        catchError(this.handleError('createJugador'))
       );
   }
 
@@ -168,7 +110,7 @@ export class Database {
     return this.http.put<ApiResponse<Jugador>>(`${this.apiUrl}/jugadores/${id}`, jugador, { headers: this.getHeaders() })
       .pipe(
         map(response => response.data),
-        catchError(this.handleError<Jugador>('updateJugador'))
+        catchError(this.handleError('updateJugador'))
       );
   }
 
@@ -180,17 +122,13 @@ export class Database {
       );
   }
 
-  // ==================== ÁRBITROS ====================
+  // ==================== ARBITROS ====================
 
-  /**
-   * Obtiene todos los árbitros de la base de datos
-   * @returns Observable con array de árbitros
-   */
   getArbitros(): Observable<Arbitro[]> {
     return this.http.get<ApiResponse<Arbitro[]>>(`${this.apiUrl}/arbitros`, { headers: this.getHeaders() })
       .pipe(
         map(response => response.data || []),
-        catchError(this.handleError<Arbitro[]>('getArbitros', []))
+        catchError(this.handleError('getArbitros'))
       );
   }
 
@@ -198,7 +136,7 @@ export class Database {
     return this.http.get<ApiResponse<Arbitro>>(`${this.apiUrl}/arbitros/${id}`, { headers: this.getHeaders() })
       .pipe(
         map(response => response.data),
-        catchError(this.handleError<Arbitro>('getArbitro'))
+        catchError(this.handleError('getArbitro'))
       );
   }
 
@@ -206,7 +144,7 @@ export class Database {
     return this.http.post<ApiResponse<Arbitro>>(`${this.apiUrl}/arbitros`, arbitro, { headers: this.getHeaders() })
       .pipe(
         map(response => response.data),
-        catchError(this.handleError<Arbitro>('createArbitro'))
+        catchError(this.handleError('createArbitro'))
       );
   }
 
@@ -214,7 +152,7 @@ export class Database {
     return this.http.put<ApiResponse<Arbitro>>(`${this.apiUrl}/arbitros/${id}`, arbitro, { headers: this.getHeaders() })
       .pipe(
         map(response => response.data),
-        catchError(this.handleError<Arbitro>('updateArbitro'))
+        catchError(this.handleError('updateArbitro'))
       );
   }
 
@@ -228,15 +166,11 @@ export class Database {
 
   // ==================== PARTIDOS ====================
 
-  /**
-   * Obtiene todos los partidos de la base de datos
-   * @returns Observable con array de partidos
-   */
   getPartidos(): Observable<Partido[]> {
     return this.http.get<ApiResponse<Partido[]>>(`${this.apiUrl}/partidos`, { headers: this.getHeaders() })
       .pipe(
         map(response => response.data || []),
-        catchError(this.handleError<Partido[]>('getPartidos', []))
+        catchError(this.handleError('getPartidos'))
       );
   }
 
@@ -244,33 +178,15 @@ export class Database {
     return this.http.get<ApiResponse<Partido>>(`${this.apiUrl}/partidos/${id}`, { headers: this.getHeaders() })
       .pipe(
         map(response => response.data),
-        catchError(this.handleError<Partido>('getPartido'))
+        catchError(this.handleError('getPartido'))
       );
   }
 
-  /**
-   * Obtiene todos los partidos asignados a un árbitro específico
-   * @param arbitroId - ID del árbitro
-   * @returns Observable con array de partidos del árbitro
-   */
-  getPartidosByArbitro(arbitroId: number): Observable<Partido[]> {
-    return this.http.get<ApiResponse<Partido[]>>(`${this.apiUrl}/partidos/arbitro/${arbitroId}`, { headers: this.getHeaders() })
-      .pipe(
-        map(response => response.data || []),
-        catchError(this.handleError<Partido[]>('getPartidosByArbitro', []))
-      );
-  }
-
-  /**
-   * Obtiene todos los partidos de un equipo específico
-   * @param equipoId - ID del equipo
-   * @returns Observable con array de partidos del equipo
-   */
   getPartidosByEquipo(equipoId: number): Observable<Partido[]> {
-    return this.http.get<ApiResponse<Partido[]>>(`${this.apiUrl}/partidos/equipo/${equipoId}`, { headers: this.getHeaders() })
+    return this.http.get<ApiResponse<Partido[]>>(`${this.apiUrl}/equipos/${equipoId}/partidos`, { headers: this.getHeaders() })
       .pipe(
         map(response => response.data || []),
-        catchError(this.handleError<Partido[]>('getPartidosByEquipo', []))
+        catchError(this.handleError('getPartidosByEquipo'))
       );
   }
 
@@ -278,7 +194,7 @@ export class Database {
     return this.http.post<ApiResponse<Partido>>(`${this.apiUrl}/partidos`, partido, { headers: this.getHeaders() })
       .pipe(
         map(response => response.data),
-        catchError(this.handleError<Partido>('createPartido'))
+        catchError(this.handleError('createPartido'))
       );
   }
 
@@ -286,7 +202,7 @@ export class Database {
     return this.http.put<ApiResponse<Partido>>(`${this.apiUrl}/partidos/${id}`, partido, { headers: this.getHeaders() })
       .pipe(
         map(response => response.data),
-        catchError(this.handleError<Partido>('updatePartido'))
+        catchError(this.handleError('updatePartido'))
       );
   }
 
@@ -301,17 +217,27 @@ export class Database {
   // ==================== MANEJO DE ERRORES ====================
 
   /**
-   * Maneja errores de las peticiones HTTP de forma centralizada
-   * Registra el error en consola y devuelve un resultado por defecto
-   *
-   * @param operation - Nombre de la operación que falló
-   * @param result - Valor por defecto a retornar en caso de error
-   * @returns Función que maneja el error y devuelve un Observable
+   * Maneja errores de las peticiones HTTP propagandolos al componente.
+   * Esto permite que cada componente decida como manejar el error
+   * (mostrar mensaje, redirigir, reintentar, etc.)
    */
-  private handleError<T>(operation = 'operation', result?: T) {
-    return (error: any): Observable<T> => {
-      console.error(`${operation} falló:`, error);
-      return of(result as T);
+  private handleError(operation = 'operation') {
+    return (error: HttpErrorResponse): Observable<never> => {
+      console.error(`${operation} fallo:`, error.message);
+
+      // Puedes agregar logica adicional aqui:
+      // - Enviar errores a un servicio de logging
+      // - Mostrar notificaciones globales
+      // - Manejar errores de autenticacion (401/403)
+
+      if (error.status === 401) {
+        // Token expirado o no autorizado
+        localStorage.removeItem('token');
+        // Podrias redirigir al login aqui si inyectas Router
+      }
+
+      // Propaga el error para que el componente lo maneje
+      return throwError(() => error);
     };
   }
 }
