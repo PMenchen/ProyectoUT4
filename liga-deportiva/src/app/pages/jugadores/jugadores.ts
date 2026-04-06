@@ -1,9 +1,7 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { forkJoin, of, Subscription } from 'rxjs';
-import { catchError, timeout } from 'rxjs/operators';
 import { Database } from '../../services/database';
 import { Jugador } from '../../models/jugador.model';
 import { Equipo } from '../../models/equipo.model';
@@ -18,7 +16,7 @@ declare const bootstrap: any;
   styleUrl: './jugadores.css',
 })
 
-export class Jugadores implements OnInit, OnDestroy {
+export class Jugadores implements OnInit {
   searchTerm = '';
   selectedJugador: Jugador | null = null;
   jugadores: Jugador[] = [];
@@ -26,69 +24,53 @@ export class Jugadores implements OnInit, OnDestroy {
   cargando = true;
   error = '';
 
-  private subscription: Subscription | null = null;
-
   constructor(private db: Database) {}
 
   ngOnInit() {
     this.cargarDatos();
   }
 
-  ngOnDestroy() {
-    // Cancelar suscripcion si el componente se destruye antes de completar
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
-  }
-
   /**
-   * Carga equipos y jugadores en paralelo usando forkJoin.
-   * Incluye timeout de 15 segundos para evitar esperas infinitas.
+   * Carga equipos y jugadores de forma independiente.
+   * La carga de jugadores controla el estado principal.
    */
   cargarDatos() {
+    console.log('[v0] cargarDatos() iniciado');
     this.cargando = true;
     this.error = '';
-    this.jugadores = [];
-    this.equipos = [];
 
-    // Cancelar peticion anterior si existe
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
-
-    // Usar forkJoin para ejecutar ambas peticiones en paralelo
-    // y esperar a que AMBAS terminen (o fallen)
-    this.subscription = forkJoin({
-      equipos: this.db.getEquipos().pipe(
-        timeout(15000), // 15 segundos de timeout
-        catchError(err => {
-          console.error('Error al cargar equipos:', err);
-          return of([] as Equipo[]); // Retornar array vacio si falla
-        })
-      ),
-      jugadores: this.db.getJugadores().pipe(
-        timeout(15000), // 15 segundos de timeout
-        catchError(err => {
-          console.error('Error al cargar jugadores:', err);
-          this.error = 'Error al cargar jugadores. Asegurate de que el backend este corriendo en http://localhost:8000';
-          return of([] as Jugador[]); // Retornar array vacio si falla
-        })
-      )
-    }).subscribe({
-      next: (result) => {
-        this.equipos = result.equipos;
-        this.jugadores = result.jugadores;
-        this.cargando = false;
+    // Cargar equipos (no bloquea la carga principal)
+    console.log('[v0] Iniciando peticion getEquipos()');
+    this.db.getEquipos().subscribe({
+      next: (equipos) => {
+        console.log('[v0] getEquipos() - next recibido:', equipos.length, 'equipos');
+        this.equipos = equipos;
       },
       error: (err) => {
-        // Este bloque se ejecuta si hay un error no capturado
-        console.error('Error inesperado:', err);
-        this.error = 'Error inesperado al cargar datos.';
-        this.cargando = false;
+        console.error('[v0] getEquipos() - ERROR:', err);
       },
       complete: () => {
-        // Asegurar que cargando se pone en false cuando se completa
+        console.log('[v0] getEquipos() - COMPLETADO');
+      }
+    });
+
+    // Cargar jugadores (controla el estado de carga principal)
+    console.log('[v0] Iniciando peticion getJugadores()');
+    this.db.getJugadores().subscribe({
+      next: (jugadores) => {
+        console.log('[v0] getJugadores() - next recibido:', jugadores.length, 'jugadores');
+        this.jugadores = jugadores;
         this.cargando = false;
+        console.log('[v0] cargando = false');
+      },
+      error: (err) => {
+        console.error('[v0] getJugadores() - ERROR:', err);
+        this.error = 'Error al cargar jugadores. Asegurate de que el backend este corriendo en http://localhost:8000';
+        this.cargando = false;
+        console.log('[v0] cargando = false (por error)');
+      },
+      complete: () => {
+        console.log('[v0] getJugadores() - COMPLETADO');
       }
     });
   }
@@ -131,13 +113,6 @@ export class Jugadores implements OnInit, OnDestroy {
     };
     return icons[deporte] || 'fa-user';
   }
-
-  // getNombreEquipo(jugador: Jugador): string {
-  //   if (jugador.equipoId && typeof jugador.equipoId === 'object' && 'nombre' in jugador.equipoId) {
-  //     return jugador.equipoId.nombre;
-  //   }
-  //   return 'Sin equipo';
-  // }
 
   getNombreEquipo(jugador: Jugador): string {
     if (!jugador.equipoId) return 'Sin equipo';
