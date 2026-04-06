@@ -1,0 +1,60 @@
+name: CI - Pruebas Automáticas
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test-laravel:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+      - name: Instalar dependencias Laravel
+        run: |
+          cd laravel-backend
+          composer install --no-progress --prefer-dist --optimize-autoloader
+      - name: Ejecutar tests Laravel (Unit + Feature)
+        run: |
+          cd laravel-backend
+          php artisan test
+
+  test-angular:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Instalar dependencias Angular
+        run: |
+          cd liga-deportiva
+          npm ci
+      - name: Ejecutar tests unitarios Angular + Karma
+        run: |
+          cd liga-deportiva
+          ng test --watch=false --browsers=ChromeHeadless
+
+  test-cypress:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Instalar e2e
+        run: |
+          cd liga-deportiva
+          npm ci
+          npx cypress install
+      - name: Ejecutar Cypress E2E
+        run: |
+          cd liga-deportiva
+          npx cypress run
