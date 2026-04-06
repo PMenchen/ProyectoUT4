@@ -38,47 +38,39 @@ export class Jugadores implements OnInit {
    * La carga de jugadores controla el estado principal.
    */
   cargarDatos() {
-    console.log('[v0] cargarDatos() iniciado');
     this.cargando = true;
     this.error = '';
 
     // Cargar equipos (no bloquea la carga principal)
-    console.log('[v0] Iniciando peticion getEquipos()');
     this.db.getEquipos().subscribe({
       next: (equipos) => {
-        console.log('[v0] getEquipos() - next recibido:', equipos.length, 'equipos');
         this.equipos = equipos;
       },
       error: (err) => {
         console.error('[v0] getEquipos() - ERROR:', err);
       },
       complete: () => {
-        console.log('[v0] getEquipos() - COMPLETADO');
+        console.log('getEquipos() - COMPLETADO');
       }
     });
 
     // Cargar jugadores (controla el estado de carga principal)
-    console.log('[v0] Iniciando peticion getJugadores()');
     this.db.getJugadores().subscribe({
       next: (jugadores) => {
-        console.log('[v0] getJugadores() - next recibido:', jugadores.length, 'jugadores');
         this.jugadores = jugadores;
         this.cargando = false;
-        console.log('[v0] cargando = false');
         // Forzar deteccion de cambios para actualizar la vista
         this.cdr.detectChanges();
-        console.log('[v0] detectChanges() ejecutado');
       },
       error: (err) => {
         console.error('[v0] getJugadores() - ERROR:', err);
         this.error = 'Error al cargar jugadores. Asegurate de que el backend este corriendo en http://localhost:8000';
         this.cargando = false;
-        console.log('[v0] cargando = false (por error)');
         // Forzar deteccion de cambios para mostrar el error
         this.cdr.detectChanges();
       },
       complete: () => {
-        console.log('[v0] getJugadores() - COMPLETADO');
+        console.log('getJugadores() - COMPLETADO');
       }
     });
   }
