@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -24,7 +24,10 @@ export class Jugadores implements OnInit {
   cargando = true;
   error = '';
 
-  constructor(private db: Database) {}
+  constructor(
+    private db: Database,
+    private cdr: ChangeDetectorRef
+  ) {}
 
   ngOnInit() {
     this.cargarDatos();
@@ -62,12 +65,17 @@ export class Jugadores implements OnInit {
         this.jugadores = jugadores;
         this.cargando = false;
         console.log('[v0] cargando = false');
+        // Forzar deteccion de cambios para actualizar la vista
+        this.cdr.detectChanges();
+        console.log('[v0] detectChanges() ejecutado');
       },
       error: (err) => {
         console.error('[v0] getJugadores() - ERROR:', err);
         this.error = 'Error al cargar jugadores. Asegurate de que el backend este corriendo en http://localhost:8000';
         this.cargando = false;
         console.log('[v0] cargando = false (por error)');
+        // Forzar deteccion de cambios para mostrar el error
+        this.cdr.detectChanges();
       },
       complete: () => {
         console.log('[v0] getJugadores() - COMPLETADO');
