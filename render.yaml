@@ -1,0 +1,58 @@
+services:
+  # Backend Laravel
+  - type: web
+    name: liga-deportiva-api
+    env: php
+    buildCommand: |
+      cd laravel-backend
+      composer install --no-dev --optimize-autoloader
+      php artisan config:cache
+      php artisan route:cache
+      php artisan view:cache
+    startCommand: |
+      cd laravel-backend
+      php artisan serve --host=0.0.0.0 --port=$PORT
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: false
+      - key: APP_KEY
+        generateValue: true
+      - key: DB_CONNECTION
+        value: mysql
+      - key: DB_HOST
+        fromDatabase:
+          name: liga-deportiva-db
+          property: host
+      - key: DB_DATABASE
+        fromDatabase:
+          name: liga-deportiva-db
+          property: database
+      - key: DB_USERNAME
+        fromDatabase:
+          name: liga-deportiva-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: liga-deportiva-db
+          property: password
+
+  # Frontend Angular
+  - type: web
+    name: liga-deportiva-frontend
+    env: static
+    buildCommand: |
+      cd liga-deportiva
+      npm install
+      npm run build -- --configuration=production
+    staticPublishPath: liga-deportiva/dist/liga-deportiva/browser
+    headers:
+      - path: /*
+        name: Cache-Control
+        value: public, max-age=31536000
+
+databases:
+  - name: liga-deportiva-db
+    databaseName: liga_deportiva
+    plan: free
