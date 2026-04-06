@@ -96,14 +96,12 @@ describe('Jugadores (Componente de Integración)', () => {
 
   // ==================== TESTS DE CARGA DE DATOS ====================
 
-  it('deberia llamar a cargarJugadores() y cargarEquipos() en ngOnInit', () => {
-    spyOn(component, 'cargarJugadores');
-    spyOn(component, 'cargarEquipos');
+  it('deberia llamar a cargarDatos() en ngOnInit', () => {
+    spyOn(component, 'cargarDatos');
     
     component.ngOnInit();
     
-    expect(component.cargarJugadores).toHaveBeenCalled();
-    expect(component.cargarEquipos).toHaveBeenCalled();
+    expect(component.cargarDatos).toHaveBeenCalled();
   });
 
   it('deberia cargar jugadores correctamente con mock HTTP', () => {
