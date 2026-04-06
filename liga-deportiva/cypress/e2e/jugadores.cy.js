@@ -66,6 +66,10 @@ describe('Flujo E2E de Jugadores', () => {
 
     cy.visit('/jugadores');
     cy.wait(['@getJugadores', '@getEquipos']);
+    
+    // Esperar a que Angular renderice las cards de jugadores en el DOM
+    // Esto es necesario porque cy.wait solo espera la respuesta HTTP, no el renderizado
+    cy.get('.card.hover-card', { timeout: 10000 }).should('have.length.at.least', 1);
   });
 
   // ==================== TESTS DE ÉXITO ====================
@@ -200,22 +204,14 @@ describe('Flujo E2E de Jugadores', () => {
    * simplemente muestra una lista vacía cuando hay error
    */
   it('debe manejar errores de la API mostrando mensaje de no encontrado', () => {
-    // Simular error de servidor
-    cy.intercept('GET', '**/api/jugadores', {
-      statusCode: 500,
-      body: { success: false, message: 'Error del servidor' }
-    }).as('getJugadoresError');
-
-    cy.intercept('GET', '**/api/equipos', {
-      statusCode: 200,
-      body: { success: true, data: mockEquipos, message: 'OK' }
-    }).as('getEquiposOk');
-
-    // Recargar página para que use el nuevo intercept
-    cy.visit('/jugadores');
-    cy.wait(['@getJugadoresError', '@getEquiposOk']);
-
-    // Cuando hay error, no hay jugadores cargados, muestra mensaje de no encontrado
+    // Este test ya tiene datos cargados del beforeEach
+    // Verificamos que el mensaje de error aparece cuando no hay resultados
+    cy.get('input[type="text"]').type('ErrorSimulado12345');
+    
+    // No debe haber cards de jugadores
+    cy.get('.card.hover-card').should('have.length', 0);
+    
+    // Debe mostrar mensaje de no encontrado
     cy.contains('No se encontraron jugadores').should('be.visible');
   });
 
@@ -246,6 +242,34 @@ describe('Flujo E2E de Jugadores', () => {
 });
 
 /**
+ * Tests E2E para errores de API (sin datos precargados)
+ */
+describe('Manejo de errores de API', () => {
+  
+  it('debe mostrar mensaje de no encontrado cuando la API falla', () => {
+    // Interceptar con error ANTES de visitar
+    cy.intercept('GET', '**/api/jugadores', {
+      statusCode: 500,
+      body: { success: false, message: 'Error del servidor' }
+    }).as('getJugadoresError');
+
+    cy.intercept('GET', '**/api/equipos', {
+      statusCode: 200,
+      body: { success: true, data: [], message: 'OK' }
+    }).as('getEquipos');
+
+    cy.visit('/jugadores');
+    cy.wait(['@getJugadoresError', '@getEquipos']);
+
+    // Esperar a que Angular procese la respuesta de error
+    cy.get('h1').should('contain', 'Jugadores');
+    
+    // Cuando hay error, no hay jugadores, muestra mensaje de no encontrado
+    cy.contains('No se encontraron jugadores').should('be.visible');
+  });
+});
+
+/**
  * Tests E2E para validación de formularios (si existiera formulario de creación)
  * Estos tests están preparados para cuando se implemente la funcionalidad
  */
@@ -254,7 +278,18 @@ describe('Validación de formularios de Jugadores (preparado)', () => {
   it('debe validar campos requeridos en formulario de creación', () => {
     // Este test está preparado para cuando exista el formulario
     // Por ahora solo verificamos que la página carga correctamente
+    cy.intercept('GET', '**/api/jugadores', {
+      statusCode: 200,
+      body: { success: true, data: [], message: 'OK' }
+    }).as('getJugadores');
+
+    cy.intercept('GET', '**/api/equipos', {
+      statusCode: 200,
+      body: { success: true, data: [], message: 'OK' }
+    }).as('getEquipos');
+
     cy.visit('/jugadores');
+    cy.wait(['@getJugadores', '@getEquipos']);
     cy.get('h1').should('contain', 'Jugadores');
   });
 });
