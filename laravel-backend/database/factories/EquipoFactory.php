@@ -27,7 +27,7 @@ class EquipoFactory extends Factory
             'deporte'      => $this->faker->randomElement(['Fútbol', 'Baloncesto', 'Voleibol', 'Balonmano']),
             'ciudad'       => $this->faker->city(),
             'categoria'    => $this->faker->randomElement(['Primera', 'Segunda', 'Juvenil', 'Cadete']),
-            'capitan_id'   => User::factory(),
+            'capitan_id'   => User::factory()->state(['tipo' => 'capitan']),
             'victorias'    => $this->faker->numberBetween(0, 20),
             'derrotas'     => $this->faker->numberBetween(0, 15),
             'empates'      => $this->faker->numberBetween(0, 10),

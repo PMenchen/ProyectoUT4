@@ -20,6 +20,14 @@ class JugadorFeatureTest extends TestCase
     use RefreshDatabase;   // limpia la BD en cada test
 
     /**
+     * Crea un usuario admin para los tests
+     */
+    protected function createAdmin(): User
+    {
+        return User::factory()->create(['tipo' => 'admin']);
+    }
+
+    /**
      * Configuración inicial para cada test
      */
     protected function setUp(): void
@@ -27,7 +35,7 @@ class JugadorFeatureTest extends TestCase
         parent::setUp();
         
         // Crear usuario capitán primero (requerido por la FK del equipo)
-        $capitan = User::factory()->capitan()->create();
+        $capitan = User::factory()->create(['tipo' => 'capitan']);
         
         // Crear un equipo por defecto para las pruebas
         Equipo::factory()->create([
@@ -135,8 +143,8 @@ class JugadorFeatureTest extends TestCase
      */
     public function test_endpoint_store_crea_jugador_con_admin()
     {
-        // Crear usuario admin usando el estado admin de la factory
-        $admin = User::factory()->admin()->create();
+        // Crear usuario admin
+        $admin = $this->createAdmin();
 
         $data = [
             'nombre'    => 'Nuevo Jugador Test',
@@ -163,7 +171,7 @@ class JugadorFeatureTest extends TestCase
      */
     public function test_endpoint_store_falla_con_validacion_incorrecta()
     {
-        $admin = User::factory()->admin()->create();
+        $admin = $this->createAdmin();
 
         $response = $this->actingAs($admin, 'sanctum')
                          ->postJson('/api/jugadores', [
@@ -178,7 +186,7 @@ class JugadorFeatureTest extends TestCase
      */
     public function test_endpoint_update_actualiza_jugador()
     {
-        $admin = User::factory()->admin()->create();
+        $admin = $this->createAdmin();
         $jugador = Jugador::factory()->create(['nombre' => 'Nombre Original']);
 
         $response = $this->actingAs($admin, 'sanctum')
@@ -202,7 +210,7 @@ class JugadorFeatureTest extends TestCase
      */
     public function test_endpoint_destroy_elimina_jugador()
     {
-        $admin = User::factory()->admin()->create();
+        $admin = $this->createAdmin();
         $jugador = Jugador::factory()->create();
 
         $response = $this->actingAs($admin, 'sanctum')
