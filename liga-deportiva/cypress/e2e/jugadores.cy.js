@@ -176,11 +176,12 @@ describe('Flujo E2E de Jugadores', () => {
     cy.contains('.card.hover-card', 'Lionel Messi').click();
     cy.get('#jugadorModal').should('have.class', 'show');
     
-    // Cerrar modal con botón
-    cy.get('#jugadorModal').find('button').contains('Cerrar').click();
+    // Cerrar modal con botón X (data-bs-dismiss)
+    cy.get('#jugadorModal').find('button[data-bs-dismiss="modal"]').first().click();
     
-    // El modal debe ocultarse (no tener clase 'show')
-    cy.get('#jugadorModal').should('not.have.class', 'show');
+    // Esperar a que Bootstrap termine la animación de cierre (300ms)
+    // y verificar que el modal ya no está visible
+    cy.get('#jugadorModal', { timeout: 5000 }).should('not.have.class', 'show');
   });
 
   // ==================== TESTS DE ERROR CONTROLADO ====================
@@ -246,7 +247,7 @@ describe('Flujo E2E de Jugadores', () => {
  */
 describe('Manejo de errores de API', () => {
   
-  it('debe mostrar mensaje de no encontrado cuando la API falla', () => {
+  it('debe mostrar mensaje de error cuando la API falla', () => {
     // Interceptar con error ANTES de visitar
     cy.intercept('GET', '**/api/jugadores', {
       statusCode: 500,
@@ -264,8 +265,9 @@ describe('Manejo de errores de API', () => {
     // Esperar a que Angular procese la respuesta de error
     cy.get('h1').should('contain', 'Jugadores');
     
-    // Cuando hay error, no hay jugadores, muestra mensaje de no encontrado
-    cy.contains('No se encontraron jugadores').should('be.visible');
+    // Cuando hay error en la API, el componente muestra mensaje de error
+    // que contiene "Error al cargar jugadores"
+    cy.contains('Error al cargar jugadores', { timeout: 10000 }).should('be.visible');
   });
 });
 
