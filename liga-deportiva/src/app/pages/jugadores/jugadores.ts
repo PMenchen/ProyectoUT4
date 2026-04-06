@@ -24,31 +24,65 @@ export class Jugadores implements OnInit {
   cargando = true;
   error = '';
 
+  // Control de carga paralela
+  private equiposCargados = false;
+  private jugadoresCargados = false;
+
   constructor(private db: Database) {}
 
   ngOnInit() {
+    this.cargarDatos();
+  }
+
+  /**
+   * Carga equipos y jugadores en paralelo y actualiza el estado de carga
+   * cuando ambas peticiones terminan
+   */
+  cargarDatos() {
+    this.cargando = true;
+    this.error = '';
+    this.equiposCargados = false;
+    this.jugadoresCargados = false;
+
     this.cargarEquipos();
     this.cargarJugadores();
   }
 
+  private actualizarEstadoCarga() {
+    // Solo desactivar cargando cuando ambas peticiones hayan terminado
+    if (this.equiposCargados && this.jugadoresCargados) {
+      this.cargando = false;
+    }
+  }
+
   cargarEquipos() {
-    this.db.getEquipos().subscribe(equipos => this.equipos = equipos);
+    this.db.getEquipos().subscribe({
+      next: (equipos) => {
+        this.equipos = equipos;
+        this.equiposCargados = true;
+        this.actualizarEstadoCarga();
+      },
+      error: (error) => {
+        console.error('Error al cargar equipos:', error);
+        this.equiposCargados = true;
+        this.actualizarEstadoCarga();
+        // No mostramos error por equipos, los jugadores se pueden mostrar sin equipos
+      }
+    });
   }
 
   cargarJugadores() {
-    this.cargando = true;
-    this.error = '';
-
     this.db.getJugadores().subscribe({
       next: (jugadores) => {
-        // console.log(jugadores);
-        this.cargando = false;
         this.jugadores = jugadores;
+        this.jugadoresCargados = true;
+        this.actualizarEstadoCarga();
       },
       error: (error) => {
-        this.cargando = false;
         this.error = 'Error al cargar jugadores. Asegúrate de que el backend esté corriendo.';
         console.error('Error al cargar jugadores:', error);
+        this.jugadoresCargados = true;
+        this.actualizarEstadoCarga();
       }
     });
   }
